@@ -1,0 +1,298 @@
+URL to view log online:
+https://source.eait.uq.edu.au/viewvc/csse2310-sem1-s4800761/trunk/a4/?view=log
+
+Retrieving logs at Sun Jun 2 12:27:31 AEST 2024
+------------------------------------------------------------------------
+r1 | uqpsutto | 2024-02-21 19:56:36 +1000 (Wed, 21 Feb 2024) | 1 line
+Changed paths:
+   A /play
+   A /prac
+   A /trunk
+   A /trunk/a1
+   A /trunk/a3
+   A /trunk/a4
+
+Initial repository structure
+
+
+------------------------------------------------------------------------
+r63 | s4800761 | 2024-05-11 12:38:34 +1000 (Sat, 11 May 2024) | 5 lines
+Changed paths:
+   A /trunk/a4/Makefile
+   A /trunk/a4/uqimageclient.c
+
+Implemented 'process_command_line' function, which parses command line, does an initial validity check, and extracts relevant information.
+Created a number of structs, including 'CommandLineArgs', 'IO', and 'Scale', which are all used in the processing of the command line.
+Implemented 'str_to_int' function, which checks if a string is an integer or not.
+Implemented 'throw_usage_error' function, which throws a usage error.
+
+
+Index: Makefile
+ Makefile |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+Index: uqimageclient.c
+ uqimageclient.c |  192 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 192 insertions(+)
+
+------------------------------------------------------------------------
+r64 | s4800761 | 2024-05-11 13:05:52 +1000 (Sat, 11 May 2024) | 3 lines
+Changed paths:
+   M /trunk/a4/uqimageclient.c
+
+Added I/O File Checking - implemented with the function 'check_files', which attempts to open the input and output file names (if given) which should be provided in the command line.
+Also added functions 'throw_read_error' and 'throw_write_error', which are errors to be thrown upon the respective inability to open a file for reading or writing.
+
+
+Index: uqimageclient.c
+ uqimageclient.c |   77 +++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 65 insertions(+), 12 deletions(-)
+
+------------------------------------------------------------------------
+r65 | s4800761 | 2024-05-18 12:44:17 +1000 (Sat, 18 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageclient.c
+
+Added the functionality to construct and send HTTP requests in 'send_request' function.
+
+
+Index: uqimageclient.c
+ uqimageclient.c |  299 ++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 267 insertions(+), 32 deletions(-)
+
+------------------------------------------------------------------------
+r66 | s4800761 | 2024-05-21 14:59:45 +1000 (Tue, 21 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageclient.c
+
+Can now receive HTTP server responses, and has basic handling (implemented in 'handle_response') funciton.
+
+
+Index: uqimageclient.c
+ uqimageclient.c |   79 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 72 insertions(+), 7 deletions(-)
+
+------------------------------------------------------------------------
+r67 | s4800761 | 2024-05-21 15:01:22 +1000 (Tue, 21 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/Makefile
+
+Modified Makefile so it can now compile two programs (uqimageclient & uqimageproc) in the one 'make' command.
+
+
+Index: Makefile
+ Makefile |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+------------------------------------------------------------------------
+r68 | s4800761 | 2024-05-25 15:47:07 +1000 (Sat, 25 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageclient.c
+
+Fixed up bugs with command line processing - in 'process_command_line' function, scale wasn't being checked properly.
+
+
+Index: uqimageclient.c
+ uqimageclient.c |  110 ++++++++++++++++++++++++--------------------------------
+ 1 file changed, 48 insertions(+), 62 deletions(-)
+
+------------------------------------------------------------------------
+r69 | s4800761 | 2024-05-25 15:48:36 +1000 (Sat, 25 May 2024) | 3 lines
+Changed paths:
+   A /trunk/a4/uqimageproc.c
+
+Set up uqimageproc.c file.
+Completed command line processing functionality, implemented in 'process_command_line' function.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  127 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+
+------------------------------------------------------------------------
+r70 | s4800761 | 2024-05-28 21:56:00 +1000 (Tue, 28 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/Makefile
+
+Fixed debug errors, now uqimageclient and uqimageproc can run with gdb.
+
+
+Index: Makefile
+ Makefile |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+------------------------------------------------------------------------
+r71 | s4800761 | 2024-05-28 22:01:29 +1000 (Tue, 28 May 2024) | 5 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added server functionality. Server can now wait on a given port or run on an ephemeral port, create sockets, bind to sockets, listen for clients, and accept clients (without connection limiting/semaphores/race conditions implemented).
+Added multi-threading functionaliy. Was not difficult to implement as it was copied pretty much straight from server-multithreaded.c from the lectures.
+Also added functionality to construct and send HTTP responses. In a client thread, the program can use the get_HTTP_request function to identify what response should be sent back accordingly.
+Functions 'init_headers_array' and 'send_response' make sending HTTP responses extremely modular when paired with the use of an 'init_(blank)_response' function, which initialises a 'Response' struct to be sent to the client.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  392 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 391 insertions(+), 1 deletion(-)
+
+------------------------------------------------------------------------
+r72 | s4800761 | 2024-05-28 22:24:21 +1000 (Tue, 28 May 2024) | 3 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added 'init_invalid_op_response' function, which allows the contents of an invalid operation HTTP response to be populated.
+Added constants at the start to hold HTTP response statuses and messages, as well as added the ResponseCodes enum to hold HTTP response codes.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  121 +++++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 83 insertions(+), 38 deletions(-)
+
+------------------------------------------------------------------------
+r73 | s4800761 | 2024-05-29 11:00:26 +1000 (Wed, 29 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added image too large HTTP response functionality. Implemented this in the 'init_image_too_large_response' and 'get_body_size' functions.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  132 ++++++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 96 insertions(+), 36 deletions(-)
+
+------------------------------------------------------------------------
+r74 | s4800761 | 2024-05-29 11:12:55 +1000 (Wed, 29 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/Makefile
+
+Added support to build uqimageproc with FreeImage library.
+
+
+Index: Makefile
+ Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+------------------------------------------------------------------------
+r75 | s4800761 | 2024-05-29 12:21:20 +1000 (Wed, 29 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/Makefile
+
+Added missing include and links for FreeImage in uqimageproc build.
+
+
+Index: Makefile
+ Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+------------------------------------------------------------------------
+r76 | s4800761 | 2024-05-29 15:07:59 +1000 (Wed, 29 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added Bad Request handling in 'ops_valid' function, which goes through char** which has been split at every instance of '/' and checks the operation and argument syntax/values.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  182 ++++++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 134 insertions(+), 48 deletions(-)
+
+------------------------------------------------------------------------
+r77 | s4800761 | 2024-05-29 16:51:15 +1000 (Wed, 29 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added functionality where the previously named 'ops_valid' function builds and returns an array of Operation structs, which can then be used to handle the operations.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |   86 +++++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 64 insertions(+), 22 deletions(-)
+
+------------------------------------------------------------------------
+r78 | s4800761 | 2024-05-30 23:35:40 +1000 (Thu, 30 May 2024) | 3 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added operation execution (image manipulation) and '200' OK requests to go along with them.
+Did this using previously made OpArray struct which contains an array of operations, looping through and executing the operations. Implemented in 'execute_ops' function.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |   99 ++++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 79 insertions(+), 20 deletions(-)
+
+------------------------------------------------------------------------
+r79 | s4800761 | 2024-05-31 12:28:44 +1000 (Fri, 31 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added rudimentary semaphore based client connection limiting functionality. A lot of work to do.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  133 ++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 70 insertions(+), 63 deletions(-)
+
+------------------------------------------------------------------------
+r80 | s4800761 | 2024-05-31 12:43:32 +1000 (Fri, 31 May 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Fixes with timeout issues on semaphore implementation. Originally was passing in a pointer to a struct contained in a struct, but now just putting the semaphore lock variable straight into the struct being passed into the client.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |   28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
+
+------------------------------------------------------------------------
+r81 | s4800761 | 2024-05-31 14:24:52 +1000 (Fri, 31 May 2024) | 4 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added the start of mutually exclusive inter-thread statistics manipulation. This was done with the new sem_t lock which is initialised in main using the new 'init_lock' function.
+Attributes of the new Statistics struct (which contains to pointers to statistics variables) is initialised in main, passed to process_connections, and the addresses of the variables in stats is then passed to each client thread created.
+Semaphore-locked (race-condition safe) variable manipulation is implemented in the function 'change_sem_stat', and is called in the client_thread function.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |   86 ++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 72 insertions(+), 14 deletions(-)
+
+------------------------------------------------------------------------
+r82 | s4800761 | 2024-06-01 16:14:55 +1000 (Sat, 01 Jun 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Added operation success counting. Did this by modifying the 'execute_ops' function to return a new OpExecInfo struct. 'execute_ops' now counts whenever an operation succeeds and adds it to the count returned by it. The statistic is then updated in 'construct_response'.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  426 +++++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 289 insertions(+), 137 deletions(-)
+
+------------------------------------------------------------------------
+r83 | s4800761 | 2024-06-02 12:22:49 +1000 (Sun, 02 Jun 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageproc.c
+
+Final clean ups based on 2310stylecheck.sh. Fixed up magic numbers, function lengths, etc.
+
+
+Index: uqimageproc.c
+ uqimageproc.c |  152 ++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 85 insertions(+), 67 deletions(-)
+
+------------------------------------------------------------------------
+r84 | s4800761 | 2024-06-02 12:24:26 +1000 (Sun, 02 Jun 2024) | 2 lines
+Changed paths:
+   M /trunk/a4/uqimageclient.c
+
+Final clean ups from 2310stylecheck.sh. Fixed magic numbers, function lengths etc. Introduced new function specfically 'process_arg', which splits the originally too-long 'process_command_line' function into a smaller subfunction.
+
+
+Index: uqimageclient.c
+ uqimageclient.c |   98 +++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 58 insertions(+), 40 deletions(-)
+
+------------------------------------------------------------------------
